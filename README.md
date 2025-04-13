@@ -38,6 +38,8 @@ The app provides users with:
 
 * General bug fixing and polishing before submission
 
+* Code documentation
+
 
 **🔧 Technologies Used**
 
