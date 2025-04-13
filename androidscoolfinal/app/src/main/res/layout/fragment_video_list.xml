@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="@drawable/background_gradient">
+
+    <!-- כותרת קטגוריה -->
+    <TextView
+        android:id="@+id/tv_category_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="24sp"
+        android:textColor="@color/black"
+        android:layout_gravity="center"
+        android:paddingBottom="16dp"
+        android:fontFamily="@font/assistantbold" />
+
+    <!-- רשימת הסרטונים -->
+    <ListView
+        android:id="@+id/video_list_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:dividerHeight="1dp"
+        android:layout_marginBottom="16dp" />
+
+    <!-- נגן וידאו -->
+    <VideoView
+        android:id="@+id/video_view"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:visibility="gone"
+        android:layout_marginTop="16dp" />
+
+    <!-- כפתור ניגון -->
+    <Button
+        android:id="@+id/btn_play"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Play"
+        android:backgroundTint="#A921F3"
+        android:textColor="#FFFFFF"
+        android:fontFamily="@font/assistantbold"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        android:layout_marginTop="10dp" />
+
+</LinearLayout>

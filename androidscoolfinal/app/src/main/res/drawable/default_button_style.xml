@@ -1,0 +1,19 @@
+<!-- res/drawable/default_button_style.xml -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- מצב של לחיצה -->
+    <item android:state_pressed="true">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/light_blue" /> <!-- צבע לחיצה -->
+            <corners android:radius="25dp" /> <!-- פינות מעוגלות -->
+        </shape>
+    </item>
+
+    <!-- מצב רגיל -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@android:color/white" /> <!-- לבן ברירת מחדל -->
+            <stroke android:width="2dp" android:color="@color/gray" /> <!-- גבול אפור -->
+            <corners android:radius="25dp" /> <!-- פינות מעוגלות -->
+        </shape>
+    </item>
+</selector>

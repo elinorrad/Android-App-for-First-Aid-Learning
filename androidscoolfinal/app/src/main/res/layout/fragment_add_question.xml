@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background_gradient">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- כותרת -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="הוספת שאלה"
+            android:textSize="24sp"
+            android:textColor="#FFFFFF"
+            android:fontFamily="@font/assistantbold"
+            android:layout_gravity="center"
+            android:layout_marginBottom="16dp" />
+
+        <!-- RecyclerView להצגת רשימת שאלות -->
+        <ListView
+            android:id="@+id/lv_questions"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Spinner לבחירת נושא -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="בחר נושא:"
+            android:textSize="16sp"
+            android:textColor="#FFFFFF"
+            android:fontFamily="@font/assistantbold" />
+        <Spinner
+            android:id="@+id/spinner_topic"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#FFFFFF"
+            android:padding="10dp"
+            android:entries="@array/topics_array" />
+
+        <!-- Spinner לבחירת רמת קושי -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="בחר רמת קושי:"
+            android:textSize="16sp"
+            android:textColor="#FFFFFF"
+            android:layout_marginTop="16dp"
+            android:fontFamily="@font/assistantbold" />
+        <Spinner
+            android:id="@+id/spinner_difficulty"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#FFFFFF"
+            android:padding="10dp"
+            android:entries="@array/difficulty_array" />
+
+        <!-- שדות לשאלות ותשובות -->
+        <EditText
+            android:id="@+id/et_question"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#FFFFFF"
+            android:hint="כתוב את השאלה"
+            android:padding="10dp"
+            android:layout_marginTop="16dp"
+            android:fontFamily="@font/assistantbold" />
+
+        <EditText
+            android:id="@+id/et_answer1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#FFFFFF"
+            android:hint="תשובה 1"
+            android:padding="10dp"
+            android:fontFamily="@font/assistantbold" />
+
+        <EditText
+            android:id="@+id/et_answer2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#FFFFFF"
+            android:hint="תשובה 2"
+            android:padding="10dp"
+            android:fontFamily="@font/assistantbold" />
+
+        <EditText
+            android:id="@+id/et_answer3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#FFFFFF"
+            android:hint="תשובה 3"
+            android:padding="10dp"
+            android:fontFamily="@font/assistantbold" />
+
+        <EditText
+            android:id="@+id/et_answer4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#FFFFFF"
+            android:hint="תשובה 4"
+            android:padding="10dp"
+            android:fontFamily="@font/assistantbold" />
+
+        <EditText
+            android:id="@+id/et_correct_answer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#FFFFFF"
+            android:hint="מספר התשובה הנכונה (1-4)"
+            android:padding="10dp"
+            android:fontFamily="@font/assistantbold" />
+
+        <!-- כפתור הוספת שאלה -->
+        <Button
+            android:id="@+id/btn_add_question"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp"
+            android:backgroundTint="#000000"
+            android:text="שמור שאלה"
+            android:textColor="#FFFFFF"
+            android:fontFamily="@font/assistantbold" />
+
+        <Button
+            android:id="@+id/btn_upload_json"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="טען קובץ JSON" />
+
+        <!-- View לעריכת שאלה -->
+        <include
+            android:id="@+id/edit_question_view"
+            layout="@layout/item_question" />
+
+    </LinearLayout>
+</ScrollView>

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "975413162311",
+    "project_id": "mdai-project",
+    "storage_bucket": "mdai-project.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:975413162311:android:3898d9dfdcf3ced6fc5c62",
+        "android_client_info": {
+          "package_name": "com.example.finalandroidproject"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBU9FwXQ1QJzCLUUqUhuwZ4J_yrJFDSm-k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

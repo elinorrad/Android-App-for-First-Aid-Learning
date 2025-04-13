@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/question_display_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:background="@drawable/background_gradient"
+    tools:context=".TestDisplayFragment">
+
+    <!-- Timer Section -->
+    <TextView
+        android:id="@+id/timer_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="15:00"
+        android:textSize="24sp"
+        android:textColor="@color/white"
+        android:fontFamily="@font/assistantbold"
+        android:gravity="center"
+        android:contentDescription="Timer Countdown"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp" />
+
+    <!-- Question Section -->
+    <TextView
+        android:id="@+id/question_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="השאלה תוצג כאן"
+        android:textSize="22sp"
+        android:textColor="@color/white"
+        android:fontFamily="@font/assistantextrabold"
+        android:gravity="center"
+        android:contentDescription="Displayed Question"
+        app:layout_constraintTop_toBottomOf="@id/timer_text"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"
+        android:textAlignment="center" />
+
+    <!-- Answer Buttons -->
+    <Button
+        android:id="@+id/btn_answer_1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="תשובה 1"
+        android:backgroundTint="@color/white"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        android:fontFamily="@font/assistantbold"
+        android:contentDescription="Answer Option 1"
+        app:layout_constraintTop_toBottomOf="@id/question_text"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"
+        android:layout_marginHorizontal="16dp" />
+
+    <Button
+        android:id="@+id/btn_answer_2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="תשובה 2"
+        android:backgroundTint="@color/white"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        android:fontFamily="@font/assistantbold"
+        android:contentDescription="Answer Option 2"
+        app:layout_constraintTop_toBottomOf="@id/btn_answer_1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="10dp"
+        android:layout_marginHorizontal="16dp" />
+
+    <Button
+        android:id="@+id/btn_answer_3"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="תשובה 3"
+        android:backgroundTint="@color/white"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        android:fontFamily="@font/assistantbold"
+        android:contentDescription="Answer Option 3"
+        app:layout_constraintTop_toBottomOf="@id/btn_answer_2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="10dp"
+        android:layout_marginHorizontal="16dp" />
+
+    <Button
+        android:id="@+id/btn_answer_4"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="תשובה 4"
+        android:backgroundTint="@color/white"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        android:fontFamily="@font/assistantbold"
+        android:contentDescription="Answer Option 4"
+        app:layout_constraintTop_toBottomOf="@id/btn_answer_3"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="10dp"
+        android:layout_marginHorizontal="16dp" />
+
+    <!-- Next Button -->
+    <Button
+        android:id="@+id/btn_next_question"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="הבא"
+        android:backgroundTint="@color/white"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        android:fontFamily="@font/assistantbold"
+        app:layout_constraintTop_toBottomOf="@id/btn_answer_4"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

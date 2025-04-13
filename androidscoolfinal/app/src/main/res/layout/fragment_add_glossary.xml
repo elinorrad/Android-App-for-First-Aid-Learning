@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background_gradient">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- כותרת מילון -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="מילון מושגים"
+            android:textSize="24sp"
+            android:textColor="#FFFFFF"
+            android:fontFamily="@font/assistantbold"
+            android:layout_marginTop="40dp"
+            android:layout_marginBottom="16dp" />
+
+        <!-- ListView להצגת רשימת המושגים -->
+        <ListView
+            android:id="@+id/lv_glossary"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:layout_marginBottom="16dp"
+            android:backgroundTint="#FFFFFF" />
+
+        <!-- כותרת הוספת מושג -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="\nהוסף מושג למילון"
+            android:textSize="18dp"
+            android:textColor="#FFFFFF"
+            android:layout_marginBottom="20dp"
+            android:fontFamily="@font/assistantextrabold" />
+
+        <!-- שדה להזנת מושג -->
+        <EditText
+            android:id="@+id/et_concept"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#FFFFFF"
+            android:hint="כתוב מושג"
+            android:padding="10dp"
+            android:fontFamily="@font/assistantbold"
+            android:textColor="#FFFFFF"
+            android:textColorHint="#A0A0A0" />
+
+        <!-- שדה להזנת הגדרה -->
+        <EditText
+            android:id="@+id/et_concept_definition"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#FFFFFF"
+            android:hint="כתוב את ההגדרה"
+            android:padding="10dp"
+            android:layout_marginTop="8dp"
+            android:fontFamily="@font/assistantbold"
+            android:textColor="#FFFFFF"
+            android:textColorHint="#A0A0A0" />
+
+        <!-- כפתור שמירה -->
+        <Button
+            android:id="@+id/btn_add_concept"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp"
+            android:text="שמור מושג למילון"
+            android:backgroundTint="#A921F3"
+            android:textColor="#FFFFFF"
+            android:fontFamily="@font/assistantbold" />
+
+    </LinearLayout>
+</ScrollView>

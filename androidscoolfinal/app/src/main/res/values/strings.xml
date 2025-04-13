@@ -1,0 +1,70 @@
+<resources>
+    <string name="app_name">FinalAndroidProject</string>
+    <string name="open">Open</string>
+    <string name="close">Close</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="nav_home">בית</string>
+    <string name="nav_progress">התקדמות אישית</string>
+    <string name="nav_learning">למידה</string>
+    <string name="nav_summaries">סיכומים</string>
+    <string name="nav_videos">סרטונים</string>
+    <string name="nav_ambulance">האימבולנס</string>
+    <string name="nav_glossary">מילון מושגים</string>
+    <string name="nav_practice">תרגול</string>
+    <string name="nav_questions">שאלות תרגול</string>
+    <string name="nav_tests">מבחנים</string>
+    <string name="nav_mega_codes">מגה קודים</string>
+    <string name="nav_settings">הגדרות</string>
+    <string name="nav_logout">Log Out</string>
+    <string name="nav_admin">אזור הנהלה</string>
+    <string name="welcome_admin">ברוך הבא, מנהל!</string>
+
+    <string-array name="topics_array">
+        <item>כלליות</item>
+        <item>מבוא לאנטומיה ופיזיולוגיה</item>
+        <item>מערכת הלב וכלי הדם</item>
+        <item>מערכת הנשימה</item>
+        <item>מערכת העצבים</item>
+        <item>מערכת השלד והשרירים</item>
+        <item>החייאה בסיסית</item>
+        <item>החייאה חצי מתקדמת</item>
+        <item>חנק מגוף זר</item>
+        <item>אלרגיה ואנאפילקסיס</item>
+        <item>מחלות לב וכלי דם</item>,
+        <item>מצבי חירום נשימתיים</item>
+        <item>הטיפול בחולה</item>
+        <item>סוכרת</item>
+        <item>עילפון</item>
+        <item>פרכוסים</item>
+        <item>רעלים והרעלות</item>
+        <item>שבץ</item>
+        <item>כוויות</item>
+        <item>הלם</item>
+        <item>מבוא לטראומה</item>
+        <item>ניהול נתיב אוויר</item>
+        <item>PHTLS</item>
+        <item>פגיעות בטן</item>
+        <item>פגיעות במערכת התנועה</item>
+        <item>פגיעות חזה</item>
+        <item>פגיעות עמוד שדרה</item>
+        <item>פגיעות ראש</item>
+        <item>קינמטיקה בטראומה</item>
+        <item>שטפי דם ופצעים</item>
+        <item>תליה</item>
+        <item>התחשמלות</item>
+        <item>טביעה</item>
+        <item>פגיעות אקלים</item>
+        <item>פגיעות מבעלי חיים</item>
+        <item>טראומה בילדים</item>
+        <item>טראומה בקשישים</item>
+        <item>טראומה בנשים בהריון</item>
+    </string-array>
+
+    <string-array name="difficulty_array">
+        <item>מע"ר</item>
+        <item>חובש</item>
+        <item>פרמדיק</item>
+    </string-array>
+
+</resources>

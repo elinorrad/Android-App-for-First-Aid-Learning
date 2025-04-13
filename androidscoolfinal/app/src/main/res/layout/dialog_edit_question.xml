@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <EditText
+        android:id="@+id/et_question"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="הזן שאלה"
+        android:inputType="text" />
+
+    <EditText
+        android:id="@+id/et_answer1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="תשובה 1"
+        android:inputType="text" />
+
+    <EditText
+        android:id="@+id/et_answer2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="תשובה 2"
+        android:inputType="text" />
+
+    <EditText
+        android:id="@+id/et_answer3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="תשובה 3"
+        android:inputType="text" />
+
+    <EditText
+        android:id="@+id/et_answer4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="תשובה 4"
+        android:inputType="text" />
+
+    <EditText
+        android:id="@+id/et_correct_answer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="תשובה נכונה"
+        android:inputType="text" />
+
+</LinearLayout>

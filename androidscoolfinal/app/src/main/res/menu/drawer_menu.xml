@@ -1,0 +1,58 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_home"
+            android:icon="@drawable/ic_home"
+            android:title="@string/nav_home" />
+
+        <item
+            android:id="@+id/nav_progress"
+            android:icon="@drawable/ic_progress"
+            android:title="@string/nav_progress" />
+
+        <item
+            android:id="@+id/nav_learning"
+            android:icon="@drawable/ic_learning"
+            android:title="@string/nav_learning">
+            <menu>
+                <item android:id="@+id/nav_summaries" android:title="@string/nav_summaries" />
+                <item android:id="@+id/nav_videos" android:title="@string/nav_videos" />
+                <item android:id="@+id/nav_ambulance" android:title="@string/nav_ambulance" />
+                <item android:id="@+id/nav_glossary" android:title="@string/nav_glossary" />
+            </menu>
+        </item>
+
+        <item
+            android:id="@+id/nav_practice"
+            android:icon="@drawable/ic_practice"
+            android:title="@string/nav_practice">
+            <menu>
+                <item android:id="@+id/nav_questions" android:title="@string/nav_questions" />
+                <item android:id="@+id/nav_tests" android:title="@string/nav_tests" />
+                <item android:id="@+id/nav_mega_codes" android:title="@string/nav_mega_codes" />
+            </menu>
+        </item>
+
+        <item
+            android:id="@+id/lasts"
+            android:title="">
+            <menu>
+                <item
+                    android:id="@+id/nav_settings"
+                    android:icon="@drawable/ic_settings"
+                    android:title="@string/nav_settings" />
+
+                <item
+                    android:id="@+id/nav_logout"
+                    android:icon="@drawable/ic_logout"
+                    android:title="@string/nav_logout" />
+            </menu>
+        </item>
+        <item
+            android:id="@+id/nav_admin"
+            android:icon="@drawable/ic_admin"
+            android:title="@string/nav_admin"
+            android:visible="false" /> <!-- מנהל לא יוצג כברירת מחדל -->
+
+    </group>
+</menu>
