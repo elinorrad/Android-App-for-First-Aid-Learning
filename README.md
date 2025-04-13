@@ -71,4 +71,13 @@ by me, as a twelfth grade student.
 * Improve UX based on feedback
 
 
+**🚀 If you want to run the code**
+
+
+If you want to run the application, you can open a new user, or log in as an administrator user to get an administrator screen to edit+add+delete content.
+
+To get an administrator user, contact elinorrad@gmail.com
+
+An example of the application's activity as an administrator appears in a video in this repository
+
 
