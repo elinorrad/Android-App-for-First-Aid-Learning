@@ -1,23 +1,38 @@
 package com.example.finalandroidproject;
 
+/**
+ * Model class representing an educational video.
+ * Contains the video's title, URL, category (topic), and a transient ID for in-memory use.
+ */
 public class Video {
+
     private String title;
     private String url;
-    private String category; // נושא הסרטון
+    private String category;
 
-    private transient String id; // מזהה זמני שאינו נשמר בפיירבייס
+    // Transient ID used for in-memory operations (not stored in Firebase)
+    private transient String id;
 
-    // בנאי ריק (נדרש עבור Firebase)
+    /**
+     * Empty constructor required for Firebase deserialization.
+     */
     public Video() {}
 
-    // בנאי מלא
+    /**
+     * Constructs a new Video object.
+     *
+     * @param title    The title of the video
+     * @param url      The URL of the video (e.g., YouTube link)
+     * @param category The topic/category of the video
+     */
     public Video(String title, String url, String category) {
         this.title = title;
         this.url = url;
         this.category = category;
     }
 
-    // Getters ו-Setters
+    // Getters and Setters
+
     public String getTitle() {
         return title;
     }
@@ -42,10 +57,16 @@ public class Video {
         this.category = category;
     }
 
+    /**
+     * Gets the in-memory ID (used locally, not persisted in Firebase).
+     */
     public String getId() {
         return id;
     }
 
+    /**
+     * Sets the in-memory ID (used locally, not persisted in Firebase).
+     */
     public void setId(String id) {
         this.id = id;
     }

@@ -7,6 +7,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,12 +15,19 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+/**
+ * MainActivity is the central activity that handles:
+ * - Firebase user authentication
+ * - Navigation drawer functionality
+ * - Fragment switching
+ */
 public class MainActivity extends AppCompatActivity {
 
     private DrawerLayout drawerLayout;
@@ -27,6 +35,10 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseAuth auth;
     private NavigationView navigationView;
 
+    /**
+     * Called when the activity is first created.
+     * Initializes the toolbar, drawer, Firebase authentication, and user info.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,30 +69,29 @@ public class MainActivity extends AppCompatActivity {
 
             if (tvEmail != null) {
                 String email = user.getEmail();
-                tvEmail.setText(email != null && !email.isEmpty() ? email : "אימייל לא זמין");
+                tvEmail.setText(email != null && !email.isEmpty() ? email : "Email not available");
             }
 
-            FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-            DatabaseReference userReference = firebaseDatabase.getReference()
-                    .child("Users")
+            DatabaseReference userReference = FirebaseDatabase.getInstance()
+                    .getReference("Users")
                     .child(user.getUid());
 
-            // Fetch and set username
+            // Load and set user's name
             userReference.child("name").get().addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
                     String displayName = task.getResult().getValue(String.class);
                     if (tvUsername != null) {
-                        tvUsername.setText(displayName != null && !displayName.isEmpty() ? displayName : "שם משתמש לא זמין");
+                        tvUsername.setText(displayName != null && !displayName.isEmpty() ? displayName : "Username not available");
                     }
                 } else {
                     Log.e("MainActivity", "Failed to fetch username: " + task.getException().getMessage());
                     if (tvUsername != null) {
-                        tvUsername.setText("שם משתמש לא זמין");
+                        tvUsername.setText("Username not available");
                     }
                 }
             });
 
-            // Check if the user is admin
+            // Check admin privileges
             userReference.child("admin").get().addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
                     Boolean isAdmin = task.getResult().getValue(Boolean.class);
@@ -88,21 +99,22 @@ public class MainActivity extends AppCompatActivity {
                         Menu menu = navigationView.getMenu();
                         MenuItem adminItem = menu.findItem(R.id.nav_admin);
                         if (adminItem != null) {
-                            adminItem.setVisible(true); // Show admin menu item
+                            adminItem.setVisible(true);
                         }
                     }
                 } else {
                     Log.e("MainActivity", "Failed to fetch admin status: " + task.getException().getMessage());
                 }
             });
+
         } else {
             Log.e("MainActivity", "No user is logged in.");
         }
 
-        // Default fragment to load
+        // Load default fragment
         loadFragment(new MainFragment());
 
-        // Handle navigation item selection
+        // Handle drawer item clicks
         navigationView.setNavigationItemSelectedListener(item -> {
             int id = item.getItemId();
 
@@ -127,20 +139,9 @@ public class MainActivity extends AppCompatActivity {
             } else if (id == R.id.nav_settings) {
                 loadFragment(new SettingsFragment());
             } else if (id == R.id.nav_admin) {
-                loadFragment(new AdminFragment()); // Load admin fragment
+                loadFragment(new AdminFragment());
             } else if (id == R.id.nav_logout) {
-                new androidx.appcompat.app.AlertDialog.Builder(MainActivity.this)
-                        .setTitle("התנתקות")
-                        .setMessage("האם אתה בטוח שברצונך להתנתק?")
-                        .setPositiveButton("כן", (dialog, which) -> {
-                            auth.signOut();
-                            Intent intent = new Intent(MainActivity.this, OpenActivity.class);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                            startActivity(intent);
-                            finish();
-                        })
-                        .setNegativeButton("ביטול", (dialog, which) -> dialog.dismiss())
-                        .show();
+                showLogoutDialog();
                 return true;
             }
 
@@ -149,7 +150,11 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-
+    /**
+     * Replaces the current fragment with the specified fragment.
+     *
+     * @param fragment The fragment to load
+     */
     private void loadFragment(Fragment fragment) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.fragment_container, fragment);
@@ -157,6 +162,28 @@ public class MainActivity extends AppCompatActivity {
         transaction.commit();
     }
 
+    /**
+     * Displays a confirmation dialog to log out the user.
+     * On confirmation, signs out and navigates to OpenActivity.
+     */
+    private void showLogoutDialog() {
+        new androidx.appcompat.app.AlertDialog.Builder(MainActivity.this)
+                .setTitle("Logout")
+                .setMessage("Are you sure you want to log out?")
+                .setPositiveButton("Yes", (dialog, which) -> {
+                    auth.signOut();
+                    Intent intent = new Intent(MainActivity.this, OpenActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                    finish();
+                })
+                .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
+                .show();
+    }
+
+    /**
+     * Handles toggle button click (hamburger menu).
+     */
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (toggle.onOptionsItemSelected(item)) {

@@ -24,6 +24,10 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
+/**
+ * Fragment for adding educational videos to Firebase and displaying them in a list.
+ * Each video has a title, URL, and category.
+ */
 public class AddVideoFragment extends Fragment {
 
     private EditText videoTitleEditText, videoUrlEditText;
@@ -34,6 +38,15 @@ public class AddVideoFragment extends Fragment {
     private ArrayList<Video> videoList;
     private VideoAdapter videoAdapter;
 
+    /**
+     * Initializes the fragment view, sets up Firebase database reference,
+     * spinner for categories, and button listeners.
+     *
+     * @param inflater LayoutInflater for inflating the view
+     * @param container Optional parent view
+     * @param savedInstanceState Previous saved state if available
+     * @return The view of the fragment
+     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -50,7 +63,7 @@ public class AddVideoFragment extends Fragment {
         videoAdapter = new VideoAdapter(getContext(), videoList, this);
         videoListView.setAdapter(videoAdapter);
 
-        // טעינת רשימת הנושאים לתוך הספינר
+        // Populate spinner with categories from resources
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
                 getContext(),
                 R.array.topics_array,
@@ -66,19 +79,26 @@ public class AddVideoFragment extends Fragment {
         return view;
     }
 
+    /**
+     * Adds a new video to the Firebase Realtime Database after validating input.
+     * Clears input fields upon successful submission.
+     *
+     * INPUT: Data from EditText fields and selected spinner item
+     * OUTPUT: Video is saved to Firebase under a unique ID
+     */
     private void addVideo() {
         String title = videoTitleEditText.getText().toString().trim();
         String url = videoUrlEditText.getText().toString().trim();
         String category = videoCategorySpinner.getSelectedItem().toString();
 
         if (TextUtils.isEmpty(title) || TextUtils.isEmpty(url)) {
-            Toast.makeText(getContext(), "יש למלא את כל השדות", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Please fill in all fields", Toast.LENGTH_SHORT).show();
             return;
         }
 
         String id = videosRef.push().getKey();
         if (id == null) {
-            Toast.makeText(getContext(), "שגיאה ביצירת מזהה", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Error generating ID", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -87,16 +107,23 @@ public class AddVideoFragment extends Fragment {
 
         videosRef.child(id).setValue(newVideo).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
-                Toast.makeText(getContext(), "הסרטון נוסף בהצלחה", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Video added successfully", Toast.LENGTH_SHORT).show();
                 videoTitleEditText.setText("");
                 videoUrlEditText.setText("");
                 videoCategorySpinner.setSelection(0);
             } else {
-                Toast.makeText(getContext(), "שגיאה בהוספת הסרטון", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Error adding video", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
+    /**
+     * Loads all videos from Firebase and displays them in the ListView.
+     * Listens for real-time updates and reflects changes dynamically.
+     *
+     * INPUT: None
+     * OUTPUT: List of videos shown in ListView
+     */
     private void loadVideos() {
         videosRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -115,7 +142,7 @@ public class AddVideoFragment extends Fragment {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Toast.makeText(getContext(), "שגיאה בטעינת הסרטונים", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Error loading videos", Toast.LENGTH_SHORT).show();
             }
         });
     }

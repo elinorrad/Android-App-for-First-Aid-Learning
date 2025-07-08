@@ -12,15 +12,38 @@ import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
 
+/**
+ * Adapter class for displaying glossary terms in a ListView.
+ * Allows user to view, edit, or delete terms via dialogs.
+ */
 public class GlossaryAdapter extends ArrayAdapter<Term> {
 
     private final AddGlossaryFragment fragment;
 
+    /**
+     * Constructs a new GlossaryAdapter.
+     *
+     * INPUT:
+     * - context: the context in which the adapter is running
+     * - objects: the list of Term objects to display
+     * - fragment: reference to the fragment for calling edit/delete actions
+     */
     public GlossaryAdapter(@NonNull Context context, @NonNull ArrayList<Term> objects, AddGlossaryFragment fragment) {
         super(context, 0, objects);
         this.fragment = fragment;
     }
 
+    /**
+     * Populates the ListView with term data and sets click listeners for each term.
+     *
+     * INPUT:
+     * - position: position of the item in the list
+     * - convertView: recycled view
+     * - parent: parent ViewGroup
+     *
+     * OUTPUT:
+     * - Returns the populated view for the current row
+     */
     @NonNull
     @Override
     public View getView(int position, View convertView, @NonNull ViewGroup parent) {
@@ -41,10 +64,18 @@ public class GlossaryAdapter extends ArrayAdapter<Term> {
         return convertView;
     }
 
+    /**
+     * Displays a dialog with options to edit or delete a term.
+     *
+     * INPUT:
+     * - term: the selected term
+     * OUTPUT:
+     * - Shows a dialog with action buttons
+     */
     private void showOptionsDialog(Term term) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setTitle("בחר פעולה")
-                .setItems(new String[]{"ערוך", "מחק"}, (dialog, which) -> {
+        builder.setTitle("Choose Action")
+                .setItems(new String[]{"Edit", "Delete"}, (dialog, which) -> {
                     if (which == 0) {
                         showEditDialog(term);
                     } else if (which == 1) {
@@ -54,6 +85,15 @@ public class GlossaryAdapter extends ArrayAdapter<Term> {
                 .show();
     }
 
+    /**
+     * Displays a dialog allowing the user to edit a term.
+     * On save, calls the fragment's editTerm() method.
+     *
+     * INPUT:
+     * - term: the term to edit
+     * OUTPUT:
+     * - Shows editable dialog and applies changes
+     */
     private void showEditDialog(Term term) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         View dialogView = LayoutInflater.from(getContext()).inflate(R.layout.dialog_edit_term, null);
@@ -65,13 +105,13 @@ public class GlossaryAdapter extends ArrayAdapter<Term> {
         termEditText.setText(term.getTerm());
         definitionEditText.setText(term.getDefinition());
 
-        builder.setPositiveButton("שמור", (dialog, which) -> {
+        builder.setPositiveButton("Save", (dialog, which) -> {
             String updatedTerm = termEditText.getText().toString().trim();
             String updatedDefinition = definitionEditText.getText().toString().trim();
             fragment.editTerm(term, updatedTerm, updatedDefinition);
         });
 
-        builder.setNegativeButton("ביטול", null);
+        builder.setNegativeButton("Cancel", null);
         builder.show();
     }
 }

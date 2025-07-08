@@ -1,0 +1,373 @@
+@startuml
+class Term {
+- String term
+- String definition
+- String id
++ String getTerm()
++ void setTerm(String)
++ String getDefinition()
++ void setDefinition(String)
++ String getId()
++ void setId(String)
+}
+
+
+class JsonUploadService {
+- {static} String TAG
+- {static} String CHANNEL_ID
+- Handler handler
++ IBinder onBind(Intent)
++ void onCreate()
++ int onStartCommand(Intent,int,int)
+- void uploadJsonToFirebase(String)
+- void showNotification(String,String)
+- void createNotificationChannel()
++ void onDestroy()
+}
+
+
+class FileUtils {
++ {static} String getPath(Context,Uri)
+- {static} String getFileName(Context,Uri)
+}
+
+class VideoListFragment {
+- {static} String ARG_CATEGORY
+- String category
+- ListView videoListView
+- ArrayAdapter<String> videoAdapter
+- ArrayList<String> videoTitles
+- HashMap<String,String> videoUrls
+- DatabaseReference databaseReference
++ {static} VideoListFragment newInstance(String)
++ void onCreate(Bundle)
++ View onCreateView(LayoutInflater,ViewGroup,Bundle)
+- void loadVideos()
+- void openVideoInBrowser(String)
+}
+
+
+class QuestionAdapter {
+- List<Quiz> quizList
+- OnQuestionClickListener listener
++ QuestionViewHolder onCreateViewHolder(ViewGroup,int)
++ void onBindViewHolder(QuestionViewHolder,int)
++ int getItemCount()
+}
+
+
+interface QuestionAdapter$OnQuestionClickListener {
+~ void onQuestionClick(Quiz)
+}
+
+class QuestionAdapter$QuestionViewHolder {
+~ TextView questionTextView
+}
+
+class AddVideoFragment {
+- EditText videoTitleEditText
+- Spinner videoCategorySpinner
+- Button addVideoButton
+- ListView videoListView
+- DatabaseReference videosRef
+- ArrayList<Video> videoList
+- VideoAdapter videoAdapter
++ View onCreateView(LayoutInflater,ViewGroup,Bundle)
+- void addVideo()
+- void loadVideos()
+}
+
+
+class MainActivity {
+- DrawerLayout drawerLayout
+- ActionBarDrawerToggle toggle
+- FirebaseAuth auth
+- NavigationView navigationView
+# void onCreate(Bundle)
+- void loadFragment(Fragment)
+- void showLogoutDialog()
++ boolean onOptionsItemSelected(MenuItem)
+}
+
+
+class AdminFragment {
++ View onCreateView(LayoutInflater,ViewGroup,Bundle)
+- void navigateToFragment(Fragment)
+}
+
+class GlossaryFragment {
+- ListView glossaryListView
+- ArrayAdapter<String> glossaryAdapter
+- ArrayList<String> glossaryList
+- DatabaseReference databaseReference
++ View onCreateView(LayoutInflater,ViewGroup,Bundle)
+- void loadGlossary()
+}
+
+
+class VideoAdapter {
+- Context context
+- List<Video> videoList
+- Fragment fragment
++ View getView(int,View,ViewGroup)
+- void showDeleteConfirmationDialog(Video)
+- void deleteVideo(Video)
+}
+
+
+class AmbulanceFragment {
++ View onCreateView(LayoutInflater,ViewGroup,Bundle)
+}
+
+class ProgressFragment {
+- LineChart lineChart
+- TextView progressTitle
+- DatabaseReference databaseReference
+- FirebaseUser currentUser
++ View onCreateView(LayoutInflater,ViewGroup,Bundle)
+- void loadProgressData()
+- void setupChart(TreeMap<Long,Integer>)
+}
+
+
+class MegaCodesFragment {
++ View onCreateView(LayoutInflater,ViewGroup,Bundle)
+}
+
+class TestFragment {
+- {static} String TAG
++ View onCreateView(LayoutInflater,ViewGroup,Bundle)
+- void fetchQuestionsAndNavigate(String)
+}
+
+
+class AddQuestionFragment {
+- {static} int FILE_PICKER_REQUEST_CODE
+- DatabaseReference questionsRef
+- ListView questionsListView
+- ArrayAdapter<String> questionsAdapter
+- List<Quiz> quizList
+- List<String> questionTitles
+- ActivityResultLauncher<Intent> filePickerLauncher
++ View onCreateView(LayoutInflater,ViewGroup,Bundle)
+- void onQuestionClicked(Quiz)
+- void editQuestion(Quiz)
+- void deleteQuestion(Quiz)
+- void openFilePicker()
+- void startJsonUploadService(String)
+}
+
+
+class Quiz {
+- String id
+- String question
+- String answer1
+- String answer2
+- String answer3
+- String answer4
+- String correctAnswer
+- String topic
+- String difficulty
++ String getId()
++ void setId(String)
++ String getQuestion()
++ void setQuestion(String)
++ String getAnswer1()
++ void setAnswer1(String)
++ String getAnswer2()
++ void setAnswer2(String)
++ String getAnswer3()
++ void setAnswer3(String)
++ String getAnswer4()
++ void setAnswer4(String)
++ String getCorrectAnswer()
++ void setCorrectAnswer(String)
++ String getTopic()
++ void setTopic(String)
++ String getDifficulty()
++ void setDifficulty(String)
++ String toString()
+}
+
+
+class SettingsFragment {
++ View onCreateView(LayoutInflater,ViewGroup,Bundle)
+}
+
+class OpenActivity {
+- EditText etUsername
+- FirebaseAuth auth
+# void onCreate(Bundle)
+}
+
+
+class User {
+- String userId
+- String name
+- boolean isAdmin
+- HashMap<String,Integer> testResults
+- String profileImageUrl
+- void addInitialTestResult()
++ void saveToFirebase()
++ String getUserId()
++ void setUserId(String)
++ String getName()
++ void setName(String)
++ boolean isAdmin()
++ void setAdmin(boolean)
++ HashMap<String,Integer> getTestResults()
++ void setTestResults(HashMap<String,Integer>)
++ void addTestResult(String,int)
++ String getProfileImageUrl()
++ void setProfileImageUrl(String)
+}
+
+
+class RegisterActivity {
+- EditText etNewEmail
+- Button btnRegisterNewUser
+- FirebaseAuth auth
+# void onCreate(Bundle)
+- void handleSignupBtnClick()
+- boolean validateInput(String,String,String)
+- void saveUserInFirebaseRealtimeDatabase(FirebaseUser,String)
+}
+
+
+class QuestionDisplayFragment {
+- TextView timerText
+- Button answer1Button
+- ArrayList<Quiz> questionsList
+- int currentQuestionIndex
+- int score
+- CountDownTimer countDownTimer
+- {static} long TOTAL_TIME
++ View onCreateView(LayoutInflater,ViewGroup,Bundle)
+- void startTimer()
+- void displayQuestion()
+- void checkAnswer(String)
+- void displayNextQuestion()
+- void endQuiz()
+}
+
+
+class GlossaryAdapter {
+- AddGlossaryFragment fragment
++ View getView(int,View,ViewGroup)
+- void showOptionsDialog(Term)
+- void showEditDialog(Term)
+}
+
+
+class QuestionsFragment {
++ View onCreateView(LayoutInflater,ViewGroup,Bundle)
+}
+
+class Video {
+- String title
+- String url
+- String category
+- String id
++ String getTitle()
++ void setTitle(String)
++ String getUrl()
++ void setUrl(String)
++ String getCategory()
++ void setCategory(String)
++ String getId()
++ void setId(String)
+}
+
+
+class TestDisplayFragment {
+- TextView timerText
+- Button answer1Button
+- Button selectedButton
+- int defaultColor
+- ArrayList<Quiz> questionsList
+- int currentQuestionIndex
+- int score
+- CountDownTimer countDownTimer
+- {static} long TOTAL_TIME
++ View onCreateView(LayoutInflater,ViewGroup,Bundle)
+- void startTimer()
+- void displayQuestion()
+- void checkAnswer(String)
+- void highlightSelectedButton(Button)
+- void resetButtonStyle()
+- void displayNextQuestion()
+- void endQuiz()
+- void saveTestResultToFirebase(int)
+}
+
+
+class MainFragment {
++ View onCreateView(LayoutInflater,ViewGroup,Bundle)
+}
+
+class InstructionsTestFragment {
++ View onCreateView(LayoutInflater,ViewGroup,Bundle)
+}
+
+class AddGlossaryFragment {
+- EditText conceptEditText
+- Button addConceptButton
+- ListView glossaryListView
+- DatabaseReference conceptsRef
+- ArrayList<Term> termList
+- GlossaryAdapter glossaryAdapter
++ View onCreateView(LayoutInflater,ViewGroup,Bundle)
+- void addConcept()
+- void loadConcepts()
++ void editTerm(Term,String,String)
++ void deleteTerm(Term)
+}
+
+
+class SummariesFragment {
++ View onCreateView(LayoutInflater,ViewGroup,Bundle)
+}
+
+class VideosFragment {
+- ListView categoryListView
+- ArrayAdapter<String> categoryAdapter
+- ArrayList<String> categoryList
+- DatabaseReference databaseReference
++ View onCreateView(LayoutInflater,ViewGroup,Bundle)
+- void loadCategories()
+- void openVideoListFragment(String)
+}
+
+
+
+
+Service <|-- JsonUploadService
+Fragment <|-- VideoListFragment
+Adapter <|-- QuestionAdapter
+QuestionAdapter +.. QuestionAdapter$OnQuestionClickListener
+QuestionAdapter +.. QuestionAdapter$QuestionViewHolder
+ViewHolder <|-- QuestionAdapter$QuestionViewHolder
+Fragment <|-- AddVideoFragment
+AppCompatActivity <|-- MainActivity
+Fragment <|-- AdminFragment
+Fragment <|-- GlossaryFragment
+ArrayAdapter <|-- VideoAdapter
+Fragment <|-- AmbulanceFragment
+Fragment <|-- ProgressFragment
+Fragment <|-- MegaCodesFragment
+Fragment <|-- TestFragment
+Fragment <|-- AddQuestionFragment
+Serializable <|.. Quiz
+Fragment <|-- SettingsFragment
+AppCompatActivity <|-- OpenActivity
+AppCompatActivity <|-- RegisterActivity
+Fragment <|-- QuestionDisplayFragment
+ArrayAdapter <|-- GlossaryAdapter
+Fragment <|-- QuestionsFragment
+Fragment <|-- TestDisplayFragment
+Fragment <|-- MainFragment
+Fragment <|-- InstructionsTestFragment
+Fragment <|-- AddGlossaryFragment
+Fragment <|-- SummariesFragment
+Fragment <|-- VideosFragment
+@enduml

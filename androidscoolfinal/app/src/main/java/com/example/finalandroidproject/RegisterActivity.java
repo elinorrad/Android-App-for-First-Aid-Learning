@@ -6,25 +6,29 @@ import android.text.TextUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-import androidx.annotation.NonNull;
+
 import androidx.appcompat.app.AppCompatActivity;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+/**
+ * RegisterActivity allows a new user to register with email and password.
+ * The user is saved in Firebase Authentication and their data is stored in Firebase Realtime Database.
+ */
 public class RegisterActivity extends AppCompatActivity {
 
     private EditText etNewEmail, etNewPassword, etConfirmPassword, etUsername;
     private Button btnRegisterNewUser;
     private FirebaseAuth auth;
 
+    /**
+     * Initializes UI elements and sets the register button listener.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,6 +45,10 @@ public class RegisterActivity extends AppCompatActivity {
         btnRegisterNewUser.setOnClickListener(v -> handleSignupBtnClick());
     }
 
+    /**
+     * Validates user input and attempts to register the user via Firebase Authentication.
+     * On success, saves the user in the Firebase Realtime Database.
+     */
     private void handleSignupBtnClick() {
         String email = etNewEmail.getText().toString();
         String password = etNewPassword.getText().toString();
@@ -68,6 +76,14 @@ public class RegisterActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Validates the user input fields.
+     *
+     * @param email    User's email
+     * @param password User's password
+     * @param username User's chosen display name
+     * @return true if all fields are valid; false otherwise
+     */
     private boolean validateInput(String email, String password, String username) {
         if (TextUtils.isEmpty(email) || TextUtils.isEmpty(password) || TextUtils.isEmpty(username)) {
             return false;
@@ -79,12 +95,19 @@ public class RegisterActivity extends AppCompatActivity {
         return true;
     }
 
+    /**
+     * Saves the new user object in Firebase Realtime Database.
+     * Initializes the user with a default score entry and sets admin to false.
+     *
+     * @param firebaseUser The authenticated FirebaseUser object
+     * @param username     The user's display name
+     */
     private void saveUserInFirebaseRealtimeDatabase(FirebaseUser firebaseUser, String username) {
         User newUser = new User(firebaseUser.getUid(), username);
         newUser.setAdmin(false);
 
         String currentDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
-        newUser.addTestResult(currentDate, 100);
+        newUser.addTestResult(currentDate, 100); // Optional: initial dummy test result
 
         newUser.saveToFirebase();
 

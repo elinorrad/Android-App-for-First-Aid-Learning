@@ -3,9 +3,7 @@ package com.example.finalandroidproject;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -21,7 +19,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -35,6 +32,10 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Fragment for adding, displaying, editing, and deleting quiz questions.
+ * Questions can also be uploaded from a JSON file.
+ */
 public class AddQuestionFragment extends Fragment {
 
     private static final int FILE_PICKER_REQUEST_CODE = 1;
@@ -55,31 +56,29 @@ public class AddQuestionFragment extends Fragment {
                         if (!TextUtils.isEmpty(filePath)) {
                             startJsonUploadService(filePath);
                         } else {
-                            Toast.makeText(getContext(), "שגיאה בבחירת קובץ", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), "Error selecting file", Toast.LENGTH_SHORT).show();
                         }
                     }
                 }
             }
     );
 
-
+    /**
+     * Initializes the fragment view, sets up Firebase, UI listeners and question handling.
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_add_question, container, false);
 
-        //
         Button uploadJsonButton = view.findViewById(R.id.btn_upload_json);
         uploadJsonButton.setOnClickListener(v -> openFilePicker());
 
-        // אתחול ListView
         questionsListView = view.findViewById(R.id.lv_questions);
         questionsAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, questionTitles);
         questionsListView.setAdapter(questionsAdapter);
 
-        // אתחול DatabaseReference
         questionsRef = FirebaseDatabase.getInstance().getReference("Questions");
 
-        // אתחול Spinner וניהול נושא וקושי
         Spinner topicSpinner = view.findViewById(R.id.spinner_topic);
         Spinner difficultySpinner = view.findViewById(R.id.spinner_difficulty);
 
@@ -110,7 +109,6 @@ public class AddQuestionFragment extends Fragment {
             }
         });
 
-        // אתחול שדות ה-EditText
         EditText questionEditText = view.findViewById(R.id.et_question);
         EditText answer1EditText = view.findViewById(R.id.et_answer1);
         EditText answer2EditText = view.findViewById(R.id.et_answer2);
@@ -118,7 +116,6 @@ public class AddQuestionFragment extends Fragment {
         EditText answer4EditText = view.findViewById(R.id.et_answer4);
         EditText correctAnswerEditText = view.findViewById(R.id.et_correct_answer);
 
-        // אתחול כפתור הוספת השאלה
         View addQuestionButton = view.findViewById(R.id.btn_add_question);
         addQuestionButton.setOnClickListener(v -> {
             String question = questionEditText.getText().toString();
@@ -128,18 +125,15 @@ public class AddQuestionFragment extends Fragment {
             String answer4 = answer4EditText.getText().toString();
             String correctAnswer = correctAnswerEditText.getText().toString();
 
-            // בדיקה שכל השדות מלאים
             if (TextUtils.isEmpty(question) || TextUtils.isEmpty(answer1) || TextUtils.isEmpty(answer2) ||
                     TextUtils.isEmpty(answer3) || TextUtils.isEmpty(answer4) || TextUtils.isEmpty(correctAnswer) ||
                     selectedTopic[0] == null || selectedDifficulty[0] == null) {
-                Toast.makeText(getContext(), "יש למלא את כל השדות", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Please fill in all fields", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            // יצירת אובייקט Quiz
             Quiz quiz = new Quiz(question, answer1, answer2, answer3, answer4, correctAnswer, selectedTopic[0], selectedDifficulty[0]);
 
-            // שמירת השאלה ב-Firebase
             String questionId = questionsRef.push().getKey();
             if (questionId != null) {
                 questionsRef
@@ -149,7 +143,7 @@ public class AddQuestionFragment extends Fragment {
                         .setValue(quiz)
                         .addOnCompleteListener(task -> {
                             if (task.isSuccessful()) {
-                                Toast.makeText(getContext(), "השאלה נוספה בהצלחה", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getContext(), "Question added successfully", Toast.LENGTH_SHORT).show();
                                 questionEditText.setText("");
                                 answer1EditText.setText("");
                                 answer2EditText.setText("");
@@ -157,7 +151,7 @@ public class AddQuestionFragment extends Fragment {
                                 answer4EditText.setText("");
                                 correctAnswerEditText.setText("");
                             } else {
-                                Toast.makeText(getContext(), "הייתה שגיאה בהוספת השאלה", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getContext(), "Error adding question", Toast.LENGTH_SHORT).show();
                             }
                         });
             }
@@ -166,39 +160,35 @@ public class AddQuestionFragment extends Fragment {
         questionsRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                quizList.clear(); // נקה את הרשימה
-                questionTitles.clear(); // נקה את הכותרות
+                quizList.clear();
+                questionTitles.clear();
 
                 for (DataSnapshot topicSnapshot : snapshot.getChildren()) {
-                    String topic = topicSnapshot.getKey(); // קבל את הנושא
+                    String topic = topicSnapshot.getKey();
                     for (DataSnapshot difficultySnapshot : topicSnapshot.getChildren()) {
-                        String difficulty = difficultySnapshot.getKey(); // קבל את רמת הקושי
+                        String difficulty = difficultySnapshot.getKey();
                         for (DataSnapshot questionSnapshot : difficultySnapshot.getChildren()) {
                             Quiz quiz = questionSnapshot.getValue(Quiz.class);
                             if (quiz != null) {
-                                quiz.setId(questionSnapshot.getKey()); // שמירת מזהה ייחודי
-                                quiz.setTopic(topic); // שמירת הנושא
-                                quiz.setDifficulty(difficulty); // שמירת רמת הקושי
+                                quiz.setId(questionSnapshot.getKey());
+                                quiz.setTopic(topic);
+                                quiz.setDifficulty(difficulty);
 
-                                quizList.add(quiz); // הוסף לרשימת השאלות
-                                questionTitles.add(quiz.getQuestion()); // הוסף כותרת לרשימה
+                                quizList.add(quiz);
+                                questionTitles.add(quiz.getQuestion());
                             }
                         }
                     }
                 }
-
-                // עדכון הממשק הגרפי
                 questionsAdapter.notifyDataSetChanged();
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(getContext(), "שגיאה בטעינת השאלות", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Error loading questions", Toast.LENGTH_SHORT).show();
             }
         });
 
-
-        // טיפול בלחיצה על פריט ברשימה
         questionsListView.setOnItemClickListener((parent, view1, position, id) -> {
             Quiz selectedQuiz = quizList.get(position);
             onQuestionClicked(selectedQuiz);
@@ -207,12 +197,16 @@ public class AddQuestionFragment extends Fragment {
         return view;
     }
 
-
+    /**
+     * Shows a dialog allowing the user to edit or delete the selected quiz question.
+     *
+     * INPUT: quiz - the selected quiz question
+     * OUTPUT: Shows dialog with actions
+     */
     private void onQuestionClicked(Quiz quiz) {
-        // הצגת תפריט עריכה/מחיקה
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setTitle("בחר פעולה");
-        builder.setItems(new String[]{"עריכה", "מחיקה"}, (dialog, which) -> {
+        builder.setTitle("Select Action");
+        builder.setItems(new String[]{"Edit", "Delete"}, (dialog, which) -> {
             if (which == 0) {
                 editQuestion(quiz);
             } else if (which == 1) {
@@ -222,8 +216,13 @@ public class AddQuestionFragment extends Fragment {
         builder.show();
     }
 
+    /**
+     * Opens a dialog that allows the user to edit a selected quiz question.
+     *
+     * INPUT: quiz - the quiz to edit
+     * OUTPUT: Updates Firebase on save
+     */
     private void editQuestion(Quiz quiz) {
-        // פתיחת דיאלוג עריכה
         View editView = LayoutInflater.from(getContext()).inflate(R.layout.dialog_edit_question, null);
         EditText questionEditText = editView.findViewById(R.id.et_question);
         EditText answer1EditText = editView.findViewById(R.id.et_answer1);
@@ -240,9 +239,9 @@ public class AddQuestionFragment extends Fragment {
         correctAnswerEditText.setText(quiz.getCorrectAnswer());
 
         new AlertDialog.Builder(getContext())
-                .setTitle("ערוך שאלה")
+                .setTitle("Edit Question")
                 .setView(editView)
-                .setPositiveButton("שמור", (dialog, which) -> {
+                .setPositiveButton("Save", (dialog, which) -> {
                     quiz.setQuestion(questionEditText.getText().toString().trim());
                     quiz.setAnswer1(answer1EditText.getText().toString().trim());
                     quiz.setAnswer2(answer2EditText.getText().toString().trim());
@@ -250,74 +249,65 @@ public class AddQuestionFragment extends Fragment {
                     quiz.setAnswer4(answer4EditText.getText().toString().trim());
                     quiz.setCorrectAnswer(correctAnswerEditText.getText().toString().trim());
 
-                    // נתיב מלא ב-Firebase
                     questionsRef.child(quiz.getTopic())
                             .child(quiz.getDifficulty())
                             .child(quiz.getId())
                             .setValue(quiz)
                             .addOnCompleteListener(task -> {
                                 if (task.isSuccessful()) {
-                                    Toast.makeText(getContext(), "השאלה עודכנה בהצלחה", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getContext(), "Question updated successfully", Toast.LENGTH_SHORT).show();
                                 } else {
-                                    Toast.makeText(getContext(), "שגיאה בעדכון השאלה", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getContext(), "Error updating question", Toast.LENGTH_SHORT).show();
                                 }
                             });
                 })
-                .setNegativeButton("ביטול", null)
+                .setNegativeButton("Cancel", null)
                 .show();
     }
 
+    /**
+     * Deletes the selected quiz question from Firebase.
+     *
+     * INPUT: quiz - the quiz to delete
+     * OUTPUT: Firebase entry is removed
+     */
     private void deleteQuestion(Quiz quiz) {
-        // נתיב מלא ב-Firebase
         questionsRef.child(quiz.getTopic())
                 .child(quiz.getDifficulty())
                 .child(quiz.getId())
                 .removeValue()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        Toast.makeText(getContext(), "השאלה נמחקה בהצלחה", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Question deleted successfully", Toast.LENGTH_SHORT).show();
                     } else {
-                        Toast.makeText(getContext(), "שגיאה במחיקת השאלה", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Error deleting question", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
 
+    /**
+     * Opens file picker to allow user to select a JSON file.
+     *
+     * INPUT: None
+     * OUTPUT: Launches file picker
+     */
     private void openFilePicker() {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.setType("application/json");
         intent.addCategory(Intent.CATEGORY_OPENABLE);
-        filePickerLauncher.launch(Intent.createChooser(intent, "בחר קובץ JSON"));
+        filePickerLauncher.launch(Intent.createChooser(intent, "Select JSON File"));
     }
 
-    private void openFileChooser() {
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-        intent.setType("application/json");
-        intent.addCategory(Intent.CATEGORY_OPENABLE);
-        filePickerLauncher.launch(Intent.createChooser(intent, "בחר קובץ JSON"));
-    }
-
-
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == FILE_PICKER_REQUEST_CODE && resultCode == Activity.RESULT_OK && data != null) {
-            Uri uri = data.getData();
-            if (uri != null) {
-                String filePath = FileUtils.getPath(getContext(), uri);
-                if (!TextUtils.isEmpty(filePath)) {
-                    startJsonUploadService(filePath);
-                } else {
-                    Toast.makeText(getContext(), "שגיאה בבחירת קובץ", Toast.LENGTH_SHORT).show();
-                }
-            }
-        }
-    }
-
+    /**
+     * Starts the background service to upload questions from a JSON file.
+     *
+     * INPUT: filePath - path of the selected JSON file
+     * OUTPUT: Starts upload service
+     */
     private void startJsonUploadService(String filePath) {
         Intent serviceIntent = new Intent(getContext(), JsonUploadService.class);
         serviceIntent.putExtra("filePath", filePath);
         getContext().startService(serviceIntent);
-        Toast.makeText(getContext(), "טעינת JSON מתבצעת...", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), "Uploading JSON...", Toast.LENGTH_SHORT).show();
     }
 }

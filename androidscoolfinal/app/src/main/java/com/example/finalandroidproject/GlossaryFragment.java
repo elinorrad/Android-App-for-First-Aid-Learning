@@ -20,6 +20,10 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
+/**
+ * Fragment for displaying a glossary of terms stored in Firebase.
+ * Each item consists of a term and its definition, shown in a ListView.
+ */
 public class GlossaryFragment extends Fragment {
 
     private ListView glossaryListView;
@@ -27,6 +31,14 @@ public class GlossaryFragment extends Fragment {
     private ArrayList<String> glossaryList;
     private DatabaseReference databaseReference;
 
+    /**
+     * Inflates the glossary view and initializes the ListView and Firebase reference.
+     *
+     * @param inflater LayoutInflater to inflate views
+     * @param container Optional parent view
+     * @param savedInstanceState Previously saved state
+     * @return the root view of the fragment
+     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -42,6 +54,13 @@ public class GlossaryFragment extends Fragment {
         return view;
     }
 
+    /**
+     * Loads glossary terms from Firebase and populates the ListView.
+     * Each term is displayed in the format: "Term: Definition".
+     *
+     * INPUT: None
+     * OUTPUT: ListView is updated with glossary terms
+     */
     private void loadGlossary() {
         databaseReference = FirebaseDatabase.getInstance().getReference("Concepts");
 
@@ -61,8 +80,6 @@ public class GlossaryFragment extends Fragment {
                             glossaryList.add("Error: Missing term or definition");
                         }
                     }
-                } else {
-                    System.out.println("Debug: No data found in 'Concepts' reference");
                 }
 
                 glossaryAdapter.notifyDataSetChanged();

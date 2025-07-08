@@ -26,55 +26,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:text="בחר את דרגת הלימוד"
+            android:text="כנסו לתפריט ותתחילו לחקור!"
             android:textSize="24sp"
             android:textColor="@color/white"
             android:textAlignment="center"
             android:fontFamily="@font/assistantextrabold" />
 
-        <!-- Buttons for levels -->
-        <Button
-            android:id="@+id/btn_mar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="מע''ר"
-            android:textColor="#2C6A9C"
-            android:backgroundTint="#FF3737"
-            android:fontFamily="@font/assistantbold"
-            android:textSize="18sp" />
-
-        <Button
-            android:id="@+id/btn_medic"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="חובש"
-            android:textColor="#2C6A9C"
-            android:backgroundTint="#BFBDBD"
-            android:fontFamily="@font/assistantbold"
-            android:textSize="18sp" />
-
-        <Button
-            android:id="@+id/btn_senior_medic"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="חובש בכיר"
-            android:textColor="#2C6A9C"
-            android:backgroundTint="#46A7F0"
-            android:fontFamily="@font/assistantbold"
-            android:textSize="18sp" />
-
-        <Button
-            android:id="@+id/btn_paramedic"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="פרמדיק"
-            android:textColor="#2C6A9C"
-            android:backgroundTint="#EC9C1C"
-            android:fontFamily="@font/assistantbold"
-            android:textSize="18sp" />
     </LinearLayout>
 </FrameLayout>

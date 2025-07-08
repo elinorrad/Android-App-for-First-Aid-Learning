@@ -24,6 +24,10 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * A Fragment that displays a list of videos for a specific category.
+ * Users can click on a video to open it in a browser.
+ */
 public class VideoListFragment extends Fragment {
 
     private static final String ARG_CATEGORY = "category";
@@ -35,6 +39,12 @@ public class VideoListFragment extends Fragment {
     private HashMap<String, String> videoUrls;
     private DatabaseReference databaseReference;
 
+    /**
+     * Factory method to create a new instance of this fragment for a given category.
+     *
+     * @param category The video category to load
+     * @return A new instance of fragment VideoListFragment
+     */
     public static VideoListFragment newInstance(String category) {
         VideoListFragment fragment = new VideoListFragment();
         Bundle args = new Bundle();
@@ -51,6 +61,9 @@ public class VideoListFragment extends Fragment {
         }
     }
 
+    /**
+     * Inflates the layout, sets up the list and loads videos from Firebase.
+     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -72,6 +85,9 @@ public class VideoListFragment extends Fragment {
         return view;
     }
 
+    /**
+     * Loads videos from Firebase Realtime Database for the current category.
+     */
     private void loadVideos() {
         databaseReference = FirebaseDatabase.getInstance().getReference("Videos");
         databaseReference.orderByChild("category").equalTo(category).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -79,6 +95,7 @@ public class VideoListFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 videoTitles.clear();
                 videoUrls.clear();
+
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     String title = snapshot.child("title").getValue(String.class);
                     String url = snapshot.child("url").getValue(String.class);
@@ -87,27 +104,33 @@ public class VideoListFragment extends Fragment {
                         videoUrls.put(title, url);
                     }
                 }
+
                 videoAdapter.notifyDataSetChanged();
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(getContext(), "שגיאה בטעינת הסרטונים", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Failed to load videos", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
+    /**
+     * Opens the selected video URL in the browser (tries Chrome first).
+     *
+     * @param title The title of the video selected
+     */
     private void openVideoInBrowser(String title) {
         String url = videoUrls.get(title);
         if (url == null || url.isEmpty()) {
-            Toast.makeText(getContext(), "קישור לא תקף", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Invalid URL", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        Toast.makeText(getContext(), "הסרטון ייפתח בדפדפן", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), "Opening video in browser...", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.setPackage("com.android.chrome"); // נסה לפתוח ישירות בכרום אם קיים
+        intent.setPackage("com.android.chrome"); // Attempts to open in Chrome if available
         startActivity(intent);
     }
 }

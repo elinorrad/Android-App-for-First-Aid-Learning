@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -21,61 +22,88 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.Collections;
 
+/**
+ * Fragment that allows the user to choose a test difficulty level
+ * and loads relevant questions from Firebase Realtime Database.
+ */
 public class TestFragment extends Fragment {
 
-    private DatabaseReference databaseReference;
+    private static final String TAG = "TestFragment";
 
+    /**
+     * Inflates the view and sets click listeners for difficulty buttons.
+     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_test, container, false);
 
-        // כפתור מע"ר
-        Button btnMar = view.findViewById(R.id.btn_mar);
-        btnMar.setOnClickListener(v -> loadQuestions());
+        Button easyButton = view.findViewById(R.id.btn_mar);
+        Button mediumButton = view.findViewById(R.id.btn_senior_medic);
+        Button hardButton = view.findViewById(R.id.btn_paramedic);
+
+        easyButton.setOnClickListener(v -> fetchQuestionsAndNavigate("קל"));
+        mediumButton.setOnClickListener(v -> fetchQuestionsAndNavigate("בינוני"));
+        hardButton.setOnClickListener(v -> fetchQuestionsAndNavigate("קשה"));
 
         return view;
     }
 
-    private void loadQuestions() {
-        databaseReference = FirebaseDatabase.getInstance().getReference("Questions");
+    /**
+     * Loads questions from Firebase based on the selected difficulty level,
+     * shuffles and selects up to 10 questions, then navigates to the test display.
+     *
+     * @param level The difficulty level selected by the user ("קל", "בינוני", "קשה")
+     */
+    private void fetchQuestionsAndNavigate(String level) {
+        Toast.makeText(getContext(), "Selected level: " + level, Toast.LENGTH_SHORT).show();
 
-        databaseReference.addValueEventListener(new ValueEventListener() {
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Questions");
+
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                ArrayList<Quiz> questionList = new ArrayList<>();
+                ArrayList<Quiz> questions = new ArrayList<>();
 
                 for (DataSnapshot topicSnapshot : dataSnapshot.getChildren()) {
-                    DataSnapshot marSnapshot = topicSnapshot.child("מער");
-                    for (DataSnapshot questionSnapshot : marSnapshot.getChildren()) {
-                        Quiz question = questionSnapshot.getValue(Quiz.class);
-                        if (question != null) {
-                            questionList.add(question);
+                    DataSnapshot levelSnapshot = topicSnapshot.child(level);
+
+                    for (DataSnapshot questionSnapshot : levelSnapshot.getChildren()) {
+                        Quiz quiz = questionSnapshot.getValue(Quiz.class);
+                        if (quiz != null && quiz.getQuestion() != null) {
+                            questions.add(quiz);
+                        } else {
+                            Log.w(TAG, "Invalid question loaded: " + questionSnapshot.getKey());
                         }
                     }
                 }
 
-                // ערבוב ובחירת 10 שאלות
-                Collections.shuffle(questionList);
-                ArrayList<Quiz> randomQuestions = new ArrayList<>(questionList.subList(0, Math.min(10, questionList.size())));
+                Log.d(TAG, "Total questions found: " + questions.size());
 
-                // העברת הנתונים לפרגמנט התצוגה
-                Bundle bundle = new Bundle();
-                bundle.putSerializable("questions", randomQuestions);
-                bundle.putLong("timeLimit", 15 * 60 * 1000); // 15 דקות במילישניות
+                if (!questions.isEmpty()) {
+                    Collections.shuffle(questions);
+                    ArrayList<Quiz> selectedQuestions = new ArrayList<>(questions.subList(0, Math.min(10, questions.size())));
 
-                TestDisplayFragment testDisplayFragment = new TestDisplayFragment();
-                testDisplayFragment.setArguments(bundle);
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("questions", selectedQuestions);
+                    bundle.putLong("timeLimit", 15 * 60 * 1000); // 15 minutes
 
-                FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
-                transaction.replace(R.id.fragment_container, testDisplayFragment);
-                transaction.addToBackStack(null);
-                transaction.commit();
+                    TestDisplayFragment testFragment = new TestDisplayFragment();
+                    testFragment.setArguments(bundle);
+
+                    FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
+                    transaction.replace(R.id.fragment_container, testFragment);
+                    transaction.addToBackStack(null);
+                    transaction.commit();
+                } else {
+                    Toast.makeText(getContext(), "No questions found for level: " + level, Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.e("TestFragment", "Failed to load questions: " + databaseError.getMessage());
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e(TAG, "Firebase access error: " + error.getMessage());
+                Toast.makeText(getContext(), "Failed to load questions", Toast.LENGTH_SHORT).show();
             }
         });
     }

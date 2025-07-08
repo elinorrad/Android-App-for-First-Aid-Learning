@@ -9,7 +9,24 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 
+/**
+ * Utility class for file-related operations.
+ * Used to extract file paths from URIs selected via file picker.
+ */
 public class FileUtils {
+
+    /**
+     * Copies the contents of the given Uri to a temporary file
+     * in the app's cache directory and returns the file path.
+     *
+     * INPUT:
+     * - context: The context used to access content resolver and cache directory
+     * - uri: The Uri of the selected file (e.g. from file picker)
+     *
+     * OUTPUT:
+     * - Absolute path to a temporary copy of the file (String)
+     * - Returns null if the Uri is invalid or an error occurs
+     */
     public static String getPath(Context context, Uri uri) {
         try {
             InputStream inputStream = context.getContentResolver().openInputStream(uri);
@@ -31,6 +48,17 @@ public class FileUtils {
         }
     }
 
+    /**
+     * Extracts the file name from a Uri.
+     * Supports both "content://" and "file://" schemes.
+     *
+     * INPUT:
+     * - context: The context used to query the Uri
+     * - uri: The Uri to extract the file name from
+     *
+     * OUTPUT:
+     * - The file name as a String
+     */
     private static String getFileName(Context context, Uri uri) {
         String result = null;
         if (uri.getScheme().equals("content")) {

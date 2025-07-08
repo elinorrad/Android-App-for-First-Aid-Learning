@@ -22,6 +22,11 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
+/**
+ * Fragment that allows the user to add new glossary terms,
+ * display existing terms from Firebase Realtime Database,
+ * and edit or delete them.
+ */
 public class AddGlossaryFragment extends Fragment {
 
     private EditText conceptEditText, conceptDefinitionEditText;
@@ -31,6 +36,14 @@ public class AddGlossaryFragment extends Fragment {
     private ArrayList<Term> termList;
     private GlossaryAdapter glossaryAdapter;
 
+    /**
+     * Initializes the view, Firebase reference, adapter, and event listeners.
+     *
+     * @param inflater LayoutInflater object to inflate views
+     * @param container Parent view that the fragment's UI should be attached to
+     * @param savedInstanceState If non-null, fragment is being re-constructed from previous state
+     * @return The root view of the fragment's layout
+     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -54,65 +67,85 @@ public class AddGlossaryFragment extends Fragment {
         return view;
     }
 
+    /**
+     * Adds a new concept (term + definition) to the Firebase database.
+     * Validates input fields before saving.
+     *
+     * INPUT: None (reads from EditText fields)
+     * OUTPUT: None (saves to Firebase and shows feedback to user)
+     */
     private void addConcept() {
         String term = conceptEditText.getText().toString().trim();
         String definition = conceptDefinitionEditText.getText().toString().trim();
 
         if (TextUtils.isEmpty(term) || TextUtils.isEmpty(definition)) {
-            Toast.makeText(getContext(), "יש למלא את כל השדות", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "All fields must be filled", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // creates unique ID
         String id = conceptsRef.push().getKey();
         if (id == null) {
-            Toast.makeText(getContext(), "שגיאה ביצירת מזהה ייחודי", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Error generating unique ID", Toast.LENGTH_SHORT).show();
             return;
         }
 
         Term newTerm = new Term(term, definition);
         newTerm.setId(id);
 
-        // save to firebase with the unique ID
         conceptsRef.child(id).setValue(newTerm).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
-                Toast.makeText(getContext(), "המושג נוסף בהצלחה", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Term added successfully", Toast.LENGTH_SHORT).show();
                 conceptEditText.setText("");
                 conceptDefinitionEditText.setText("");
             } else {
-                Toast.makeText(getContext(), "שגיאה בהוספת המושג", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Failed to add term", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
+    /**
+     * Loads all concepts from Firebase and updates the ListView.
+     * Listens for any changes in real-time and updates accordingly.
+     *
+     * INPUT: None
+     * OUTPUT: Populates the ListView with Term objects
+     */
     private void loadConcepts() {
         conceptsRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 ArrayList<Term> terms = new ArrayList<>();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    String id = snapshot.getKey(); // the id
+                    String id = snapshot.getKey();
                     Term term = snapshot.getValue(Term.class);
                     if (term != null) {
-                        term.setId(id); // Save the ID temporarily (not saved in Firebase)
+                        term.setId(id);
                         terms.add(term);
                     }
                 }
-                // Update the Adapter with the list
                 glossaryAdapter.clear();
                 glossaryAdapter.addAll(terms);
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Toast.makeText(getContext(), "שגיאה בטעינת המושגים", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Error loading terms", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
+    /**
+     * Updates an existing term in the Firebase database.
+     * Validates input before updating.
+     *
+     * INPUT: term - the Term object to update
+     *        updatedTerm - the new term name
+     *        updatedDefinition - the new definition
+     * OUTPUT: None (updates Firebase and shows user feedback)
+     */
     public void editTerm(Term term, String updatedTerm, String updatedDefinition) {
         if (TextUtils.isEmpty(updatedTerm) || TextUtils.isEmpty(updatedDefinition)) {
-            Toast.makeText(getContext(), "יש למלא את כל השדות", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "All fields must be filled", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -121,19 +154,25 @@ public class AddGlossaryFragment extends Fragment {
 
         conceptsRef.child(term.getId()).setValue(term).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
-                Toast.makeText(getContext(), "המושג עודכן בהצלחה", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Term updated successfully", Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(getContext(), "שגיאה בעדכון המושג", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Failed to update term", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
+    /**
+     * Deletes a term from the Firebase database.
+     *
+     * INPUT: term - the Term object to delete
+     * OUTPUT: None (removes from Firebase and shows user feedback)
+     */
     public void deleteTerm(Term term) {
         conceptsRef.child(term.getId()).removeValue().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
-                Toast.makeText(getContext(), "המושג נמחק בהצלחה", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Term deleted successfully", Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(getContext(), "שגיאה במחיקת המושג", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Failed to delete term", Toast.LENGTH_SHORT).show();
             }
         });
     }

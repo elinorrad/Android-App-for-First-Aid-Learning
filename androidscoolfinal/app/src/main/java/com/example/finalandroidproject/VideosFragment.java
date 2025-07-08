@@ -23,6 +23,10 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.HashSet;
 
+/**
+ * Fragment that displays a list of unique video categories loaded from Firebase.
+ * Selecting a category navigates the user to a list of videos in that category.
+ */
 public class VideosFragment extends Fragment {
 
     private ListView categoryListView;
@@ -30,6 +34,9 @@ public class VideosFragment extends Fragment {
     private ArrayList<String> categoryList;
     private DatabaseReference databaseReference;
 
+    /**
+     * Inflates the view and initializes the ListView of categories.
+     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -42,17 +49,18 @@ public class VideosFragment extends Fragment {
 
         loadCategories();
 
-        categoryListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String selectedCategory = categoryList.get(position);
-                openVideoListFragment(selectedCategory);
-            }
+        categoryListView.setOnItemClickListener((parent, view1, position, id) -> {
+            String selectedCategory = categoryList.get(position);
+            openVideoListFragment(selectedCategory);
         });
 
         return view;
     }
 
+    /**
+     * Loads all unique video categories from the "Videos" node in Firebase.
+     * Updates the list view with the retrieved categories.
+     */
     private void loadCategories() {
         databaseReference = FirebaseDatabase.getInstance().getReference("Videos");
 
@@ -82,6 +90,11 @@ public class VideosFragment extends Fragment {
         });
     }
 
+    /**
+     * Opens a new fragment that displays all videos within the selected category.
+     *
+     * @param category The selected video category
+     */
     private void openVideoListFragment(String category) {
         VideoListFragment videoListFragment = VideoListFragment.newInstance(category);
         FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();

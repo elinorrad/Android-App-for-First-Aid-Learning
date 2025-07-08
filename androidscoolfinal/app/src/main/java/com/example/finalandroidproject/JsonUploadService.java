@@ -27,17 +27,27 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
+/**
+ * Service for uploading a JSON file containing quiz questions to Firebase.
+ * Runs in the background and displays a notification on success or failure.
+ */
 public class JsonUploadService extends Service {
 
     private static final String TAG = "JsonUploadService";
     private static final String CHANNEL_ID = "json_upload_channel";
     private Handler handler;
 
+    /**
+     * This service is not designed to be bound.
+     */
     @Override
     public IBinder onBind(Intent intent) {
         return null;
     }
 
+    /**
+     * Called when the service is first created. Initializes the handler and notification channel.
+     */
     @Override
     public void onCreate() {
         super.onCreate();
@@ -45,6 +55,14 @@ public class JsonUploadService extends Service {
         createNotificationChannel();
     }
 
+    /**
+     * Called when the service is started. Begins uploading JSON if filePath is provided.
+     *
+     * INPUT:
+     * - intent: Contains "filePath" extra (path to local JSON file)
+     * OUTPUT:
+     * - Starts file upload and returns START_NOT_STICKY (service does not restart automatically)
+     */
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent != null && intent.hasExtra("filePath")) {
@@ -54,11 +72,19 @@ public class JsonUploadService extends Service {
         return START_NOT_STICKY;
     }
 
+    /**
+     * Parses the JSON file, creates Quiz objects, and uploads them to Firebase.
+     *
+     * INPUT:
+     * - filePath: Absolute path to the local JSON file
+     * OUTPUT:
+     * - Inserts data into Firebase and displays success/failure notification
+     */
     private void uploadJsonToFirebase(String filePath) {
         File file = new File(filePath);
         if (!file.exists()) {
-            Log.e(TAG, "הקובץ לא נמצא");
-            showNotification("שגיאה", "הקובץ לא נמצא");
+            Log.e(TAG, "File not found");
+            showNotification("Error", "File not found");
             return;
         }
 
@@ -77,7 +103,6 @@ public class JsonUploadService extends Service {
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject questionObject = jsonArray.getJSONObject(i);
 
-                // יצירת אובייקט Quiz
                 Quiz quiz = new Quiz(
                         questionObject.getString("question"),
                         questionObject.getString("answer1"),
@@ -98,40 +123,45 @@ public class JsonUploadService extends Service {
                 }
             }
 
-            Log.d(TAG, "טעינת JSON ל-Firebase הושלמה");
-            showNotification("הצלחה", "העלאת JSON הסתיימה בהצלחה!");
+            Log.d(TAG, "JSON upload to Firebase completed successfully.");
+            showNotification("Success", "JSON upload completed successfully!");
 
         } catch (IOException | JSONException e) {
-            Log.e(TAG, "שגיאה בקריאת הקובץ או העלאת הנתונים", e);
-            showNotification("שגיאה", "שגיאה בהעלאת JSON: " + e.getMessage());
+            Log.e(TAG, "Error reading file or uploading data", e);
+            showNotification("Error", "Failed to upload JSON: " + e.getMessage());
         }
     }
 
+    /**
+     * Displays a system notification with the provided title and message.
+     *
+     * INPUT:
+     * - title: Notification title
+     * - message: Notification content
+     */
     private void showNotification(String title, String message) {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_notification) // ודא שיש לך אייקון מתאים בתיקיית res/drawable
+                .setSmallIcon(R.drawable.ic_notification) // Ensure this icon exists in res/drawable
                 .setContentTitle(title)
                 .setContentText(message)
                 .setPriority(NotificationCompat.PRIORITY_HIGH);
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Notification permission not granted (Android 13+)
             return;
         }
         notificationManager.notify(1, builder.build());
     }
 
+    /**
+     * Creates a notification channel for Android O+ so that notifications can be displayed.
+     */
     private void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = "Json Upload Channel";
-            String description = "ערוץ להתראות העלאת JSON";
+            CharSequence name = "JSON Upload Channel";
+            String description = "Channel for JSON upload notifications";
             int importance = NotificationManager.IMPORTANCE_HIGH;
             NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
             channel.setDescription(description);

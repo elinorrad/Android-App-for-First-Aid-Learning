@@ -1,22 +1,44 @@
 package com.example.finalandroidproject;
 
-public class Quiz {
-    private String id; // מזהה ייחודי
+import java.io.Serializable;
+
+/**
+ * Model class representing a single quiz question.
+ * Includes the question text, multiple answers, the correct answer,
+ * topic, and difficulty level. Implements Serializable for passing via Bundles.
+ */
+public class Quiz implements Serializable {
+
+    private String id; // Unique identifier (used in Firebase)
     private String question;
     private String answer1;
     private String answer2;
     private String answer3;
     private String answer4;
     private String correctAnswer;
-    private String topic; // נושא השאלה
-    private String difficulty; // רמת קושי
+    private String topic;
+    private String difficulty;
 
-    // בנאי ריק (נדרש עבור Firebase)
+    /**
+     * Empty constructor required for Firebase.
+     */
     public Quiz() {
     }
 
-    // בנאי מלא (ללא id)
-    public Quiz(String question, String answer1, String answer2, String answer3, String answer4, String correctAnswer, String topic, String difficulty) {
+    /**
+     * Constructor without ID, used when creating a new quiz.
+     *
+     * @param question       The question text
+     * @param answer1        First answer option
+     * @param answer2        Second answer option
+     * @param answer3        Third answer option
+     * @param answer4        Fourth answer option
+     * @param correctAnswer  The correct answer
+     * @param topic          The topic of the question
+     * @param difficulty     The difficulty level
+     */
+    public Quiz(String question, String answer1, String answer2, String answer3,
+                String answer4, String correctAnswer, String topic, String difficulty) {
         this.question = question;
         this.answer1 = answer1;
         this.answer2 = answer2;
@@ -27,7 +49,8 @@ public class Quiz {
         this.difficulty = difficulty;
     }
 
-    // Getters ו-Setters
+    // Getters and Setters
+
     public String getId() {
         return id;
     }
@@ -98,5 +121,18 @@ public class Quiz {
 
     public void setDifficulty(String difficulty) {
         this.difficulty = difficulty;
+    }
+
+    /**
+     * Returns a string representation of the Quiz object (for debugging/logging).
+     */
+    @Override
+    public String toString() {
+        return "Quiz{" +
+                "question='" + question + '\'' +
+                ", correctAnswer='" + correctAnswer + '\'' +
+                ", difficulty='" + difficulty + '\'' +
+                ", topic='" + topic + '\'' +
+                '}';
     }
 }

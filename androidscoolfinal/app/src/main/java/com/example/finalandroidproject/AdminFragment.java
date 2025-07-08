@@ -12,36 +12,50 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+/**
+ * AdminFragment is the main dashboard for administrators.
+ * It allows navigation to the fragments for managing:
+ * - Quiz questions
+ * - Glossary terms
+ * - Educational videos
+ * - (Placeholder for summaries)
+ */
 public class AdminFragment extends Fragment {
 
+    /**
+     * Inflates the admin dashboard layout, sets up buttons and their listeners.
+     *
+     * @param inflater LayoutInflater to inflate the layout
+     * @param container Optional parent view
+     * @param savedInstanceState Previous saved state if available
+     * @return The view representing the admin dashboard
+     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_admin, container, false);
 
-        // איתור כפתורים
         Button btnQuestions = view.findViewById(R.id.btn_questions);
         Button btnConcepts = view.findViewById(R.id.btn_concepts);
         Button btnSummaries = view.findViewById(R.id.btn_summaries);
-        Button btnVideos = view.findViewById(R.id.btn_videos); // הוספת כפתור הסרטונים
+        Button btnVideos = view.findViewById(R.id.btn_videos);
 
-        // מאזין לכפתור השאלות
         btnQuestions.setOnClickListener(v -> navigateToFragment(new AddQuestionFragment()));
-
-        // מאזין לכפתור המושגים
         btnConcepts.setOnClickListener(v -> navigateToFragment(new AddGlossaryFragment()));
-
-        // מאזין לכפתור הסיכומים
         btnSummaries.setOnClickListener(v ->
-                Toast.makeText(getContext(), "כפתור זה עדיין אינו פעיל", Toast.LENGTH_SHORT).show()
+                Toast.makeText(getContext(), "This button is not yet active", Toast.LENGTH_SHORT).show()
         );
-
-        // מאזין לכפתור הסרטונים
         btnVideos.setOnClickListener(v -> navigateToFragment(new AddVideoFragment()));
 
         return view;
     }
 
+    /**
+     * Replaces the current fragment with the specified one.
+     *
+     * INPUT: fragment - the new fragment to navigate to
+     * OUTPUT: Displays the selected fragment on screen
+     */
     private void navigateToFragment(Fragment fragment) {
         FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.fragment_container, fragment);

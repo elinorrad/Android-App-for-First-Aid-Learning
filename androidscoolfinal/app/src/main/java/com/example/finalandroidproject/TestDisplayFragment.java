@@ -9,24 +9,31 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
+/**
+ * Fragment that runs a test (quiz) for the user.
+ * Displays one question at a time with a countdown timer, tracks score, and saves the result to Firebase.
+ */
 public class TestDisplayFragment extends Fragment {
 
     private TextView timerText, questionText;
     private Button answer1Button, answer2Button, answer3Button, answer4Button, nextQuestionButton;
-    private Button selectedButton; // משתנה לשמירת הכפתור שנבחר
+    private Button selectedButton;
     private int defaultColor;
 
     private ArrayList<Quiz> questionsList;
@@ -34,14 +41,16 @@ public class TestDisplayFragment extends Fragment {
     private int score = 0;
 
     private CountDownTimer countDownTimer;
-    private static final long TOTAL_TIME = 15 * 60 * 1000; // 15 דקות במילישניות
+    private static final long TOTAL_TIME = 15 * 60 * 1000; // 15 minutes in milliseconds
 
+    /**
+     * Initializes the UI, retrieves questions, and starts the timer.
+     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_test_display, container, false);
 
-        // חיבור ל-IDs
         timerText = view.findViewById(R.id.timer_text);
         questionText = view.findViewById(R.id.question_text);
         answer1Button = view.findViewById(R.id.btn_answer_1);
@@ -50,29 +59,23 @@ public class TestDisplayFragment extends Fragment {
         answer4Button = view.findViewById(R.id.btn_answer_4);
         nextQuestionButton = view.findViewById(R.id.btn_next_question);
 
-        // Save default color
         ColorStateList colorStateList = answer1Button.getBackgroundTintList();
         if (colorStateList != null) {
             defaultColor = colorStateList.getDefaultColor();
         }
 
-        // קבלת שאלות מה-Bundle
         questionsList = (ArrayList<Quiz>) getArguments().getSerializable("questions");
         if (questionsList == null || questionsList.isEmpty()) {
-            Toast.makeText(getContext(), "לא נמצאו שאלות להצגה", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "No questions found", Toast.LENGTH_SHORT).show();
             return view;
         }
 
-        // טיימר
         startTimer();
-
-        // הצגת השאלה הראשונה
         displayQuestion();
 
-        // טיפול בכפתורי התשובות
         View.OnClickListener answerClickListener = v -> {
             Button clickedButton = (Button) v;
-            highlightSelectedButton(clickedButton); // הדגשת הכפתור שנבחר
+            highlightSelectedButton(clickedButton);
             checkAnswer(clickedButton.getText().toString());
         };
 
@@ -81,12 +84,14 @@ public class TestDisplayFragment extends Fragment {
         answer3Button.setOnClickListener(answerClickListener);
         answer4Button.setOnClickListener(answerClickListener);
 
-        // כפתור לשאלה הבאה
         nextQuestionButton.setOnClickListener(v -> displayNextQuestion());
 
         return view;
     }
 
+    /**
+     * Starts a 15-minute countdown timer and updates the UI every second.
+     */
     private void startTimer() {
         countDownTimer = new CountDownTimer(TOTAL_TIME, 1000) {
             @Override
@@ -98,12 +103,15 @@ public class TestDisplayFragment extends Fragment {
 
             @Override
             public void onFinish() {
-                Toast.makeText(getContext(), "הזמן נגמר!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Time's up!", Toast.LENGTH_SHORT).show();
                 endQuiz();
             }
         }.start();
     }
 
+    /**
+     * Displays the current question and answers.
+     */
     private void displayQuestion() {
         if (currentQuestionIndex < questionsList.size()) {
             Quiz currentQuestion = questionsList.get(currentQuestionIndex);
@@ -112,64 +120,86 @@ public class TestDisplayFragment extends Fragment {
             answer2Button.setText(currentQuestion.getAnswer2());
             answer3Button.setText(currentQuestion.getAnswer3());
             answer4Button.setText(currentQuestion.getAnswer4());
-            resetButtonStyle(); // איפוס העיצוב של הכפתורים בשאלה חדשה
+            resetButtonStyle();
         } else {
             endQuiz();
         }
     }
 
+    /**
+     * Validates if the selected answer is correct and updates score accordingly.
+     *
+     * @param selectedAnswer The answer text selected by the user
+     */
     private void checkAnswer(String selectedAnswer) {
         Quiz currentQuestion = questionsList.get(currentQuestionIndex);
-        String[] answers = {currentQuestion.getAnswer1(), currentQuestion.getAnswer2(), currentQuestion.getAnswer3(), currentQuestion.getAnswer4()};
+        String[] answers = {
+                currentQuestion.getAnswer1(),
+                currentQuestion.getAnswer2(),
+                currentQuestion.getAnswer3(),
+                currentQuestion.getAnswer4()
+        };
         String correctAnswer = answers[Integer.parseInt(currentQuestion.getCorrectAnswer()) - 1];
 
         if (selectedAnswer.equals(correctAnswer)) {
             score++;
         }
-        nextQuestionButton.setVisibility(View.VISIBLE); // הצגת כפתור הבא
+        nextQuestionButton.setVisibility(View.VISIBLE);
     }
 
+    /**
+     * Highlights the selected answer button and resets others.
+     */
     private void highlightSelectedButton(Button clickedButton) {
-        // איפוס כל הכפתורים
         resetButtonStyle();
-
-        // שינוי רקע הכפתור הנלחץ לצבע תכלת
         int lightBlueColor = ContextCompat.getColor(getContext(), R.color.light_blue);
         clickedButton.setBackgroundTintList(ColorStateList.valueOf(lightBlueColor));
         selectedButton = clickedButton;
     }
 
+    /**
+     * Resets all answer buttons to their default color.
+     */
     private void resetButtonStyle() {
-        // איפוס כל הכפתורים לרקע ברירת מחדל
         answer1Button.setBackgroundTintList(ColorStateList.valueOf(defaultColor));
         answer2Button.setBackgroundTintList(ColorStateList.valueOf(defaultColor));
         answer3Button.setBackgroundTintList(ColorStateList.valueOf(defaultColor));
         answer4Button.setBackgroundTintList(ColorStateList.valueOf(defaultColor));
-
-        selectedButton = null; // איפוס משתנה נבחר
+        selectedButton = null;
     }
 
+    /**
+     * Advances to the next question.
+     */
     private void displayNextQuestion() {
         currentQuestionIndex++;
-        nextQuestionButton.setVisibility(View.GONE); // הסתרת כפתור הבא
+        nextQuestionButton.setVisibility(View.GONE);
         displayQuestion();
     }
 
+    /**
+     * Ends the test, shows the score, and saves it to Firebase under the user's test history.
+     */
     private void endQuiz() {
         if (countDownTimer != null) {
             countDownTimer.cancel();
         }
 
         int percentage = (int) (((double) score / questionsList.size()) * 100);
-        Toast.makeText(getContext(), "המבחן הסתיים! התוצאה שלך: " + score + " מתוך " + questionsList.size(), Toast.LENGTH_LONG).show();
+        Toast.makeText(getContext(), "Test finished! Your score: " + score + " out of " + questionsList.size(), Toast.LENGTH_LONG).show();
 
         saveTestResultToFirebase(percentage);
     }
 
+    /**
+     * Saves the user's test result to Firebase Realtime Database with timestamp as the key.
+     *
+     * @param percentage The final score as a percentage
+     */
     private void saveTestResultToFirebase(int percentage) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null) {
-            Toast.makeText(getContext(), "שגיאה: לא ניתן לשמור תוצאה ללא משתמש מחובר", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Error: no authenticated user found", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -178,7 +208,7 @@ public class TestDisplayFragment extends Fragment {
 
         String currentDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
         userRef.child(currentDate).setValue(percentage)
-                .addOnSuccessListener(aVoid -> Toast.makeText(getContext(), "תוצאה נשמרה בהצלחה!", Toast.LENGTH_SHORT).show())
-                .addOnFailureListener(e -> Toast.makeText(getContext(), "שגיאה בשמירת התוצאה: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                .addOnSuccessListener(aVoid -> Toast.makeText(getContext(), "Test result saved!", Toast.LENGTH_SHORT).show())
+                .addOnFailureListener(e -> Toast.makeText(getContext(), "Error saving result: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
 }

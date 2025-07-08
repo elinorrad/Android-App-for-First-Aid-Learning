@@ -29,12 +29,15 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
+/**
+ * Fragment that displays the user's test performance over time using a line chart.
+ * Data is retrieved from Firebase under the path: Users/{userId}/testResults.
+ */
 public class ProgressFragment extends Fragment {
 
     private LineChart lineChart;
@@ -42,38 +45,45 @@ public class ProgressFragment extends Fragment {
     private DatabaseReference databaseReference;
     private FirebaseUser currentUser;
 
+    /**
+     * Initializes the view and starts loading data from Firebase.
+     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_progress, container, false);
 
-        // חיבור ל-IDs
         lineChart = view.findViewById(R.id.line_chart);
         progressTitle = view.findViewById(R.id.progress_title);
 
-        // קבלת המשתמש המחובר
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser == null) {
-            Toast.makeText(getContext(), "לא נמצא משתמש מחובר", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "No logged-in user found", Toast.LENGTH_SHORT).show();
             return view;
         }
 
-        // קישור למסד הנתונים
-        databaseReference = FirebaseDatabase.getInstance().getReference("Users")
-                .child(currentUser.getUid()).child("testResults");
+        databaseReference = FirebaseDatabase.getInstance()
+                .getReference("Users")
+                .child(currentUser.getUid())
+                .child("testResults");
 
-        // טעינת הנתונים מ-Firebase והצגת הגרף
         loadProgressData();
 
         return view;
     }
 
+    /**
+     * Loads test results from Firebase, sorts them by timestamp, and triggers chart setup.
+     *
+     * INPUT: None
+     * OUTPUT: Triggers chart display or a toast if data is missing
+     */
     private void loadProgressData() {
         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (!snapshot.exists()) {
-                    Toast.makeText(getContext(), "אין נתונים להצגה", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "No data to display", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -93,17 +103,24 @@ public class ProgressFragment extends Fragment {
                     }
                 }
 
-                // יצירת הגרף
                 setupChart(sortedResults);
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(getContext(), "שגיאה בטעינת הנתונים", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Error loading data", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
+    /**
+     * Prepares and displays the line chart using the given data.
+     *
+     * INPUT:
+     * - sortedResults: A TreeMap of timestamps to percentage scores
+     * OUTPUT:
+     * - Configured and rendered chart
+     */
     private void setupChart(TreeMap<Long, Integer> sortedResults) {
         ArrayList<Entry> entries = new ArrayList<>();
         int index = 0;
@@ -113,11 +130,11 @@ public class ProgressFragment extends Fragment {
         }
 
         if (entries.isEmpty()) {
-            Toast.makeText(getContext(), "אין נתוני מבחנים להצגה", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "No test results to display", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        LineDataSet dataSet = new LineDataSet(entries, "התקדמות אישית");
+        LineDataSet dataSet = new LineDataSet(entries, "Personal Progress");
         dataSet.setColor(Color.RED);
         dataSet.setCircleColor(Color.BLUE);
         dataSet.setLineWidth(2f);
@@ -130,21 +147,22 @@ public class ProgressFragment extends Fragment {
         lineChart.setData(lineData);
         lineChart.invalidate();
 
-        // התאמת צירי הגרף
+        // Configure X-axis
         XAxis xAxis = lineChart.getXAxis();
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setTextColor(Color.WHITE);
         xAxis.setDrawGridLines(false);
 
+        // Configure Y-axes
         YAxis leftAxis = lineChart.getAxisLeft();
         leftAxis.setTextColor(Color.WHITE);
 
         YAxis rightAxis = lineChart.getAxisRight();
         rightAxis.setEnabled(false);
 
-        // הוספת כותרת
+        // Set chart description
         Description description = new Description();
-        description.setText("אחוזי הצלחה במבחנים לפי תאריך");
+        description.setText("Success Rate per Test Over Time");
         description.setTextColor(Color.WHITE);
         description.setTextSize(12f);
         lineChart.setDescription(description);
