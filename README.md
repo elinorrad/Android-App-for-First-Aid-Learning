@@ -38,6 +38,8 @@ The app provides users with:
 
 * General bug fixing and polishing before submission
 
+* Code documentation
+
 
 **🔧 Technologies Used**
 
@@ -57,7 +59,7 @@ The app provides users with:
 
 
 
-This project is part of my matriculation in Computer Science (5 units), and is submitted as part of the final grade. It's an individual project developed entirely 
+This project is my graduation project in Computer Science (5 units), and is submitted as part of the final grade. It's an individual project developed entirely 
 by me, as a twelfth grade student.
 
 
